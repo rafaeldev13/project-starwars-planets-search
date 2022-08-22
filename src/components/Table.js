@@ -7,7 +7,7 @@ function Table() {
   } = useContext(MyContext);
 
   return (
-    <table>
+    <table border="2">
       <thead>
         <tr>
           <th>Name</th>
