@@ -7,6 +7,8 @@ import userEvent from '@testing-library/user-event';
 import renderWithRouter from './renderWithRouter';
 import { act } from 'react-dom/test-utils';
 
+
+
 it('Check input elements', () => {
   render(<MyProvider><App /></MyProvider>);
   const columnFilter = screen.getByTestId('column-filter');
@@ -67,10 +69,31 @@ expect(planetAlderaan).toBeInTheDocument();
     const buttonFilter = screen.getByTestId("button-filter");
 
     userEvent.selectOptions(comparisonFilter, "maior que");
-    userEvent.selectOptions(comparisonFilter, "maior que");
     userEvent.click(buttonFilter);
     userEvent.selectOptions(comparisonFilter, "menor que");
     userEvent.click(buttonFilter);
     userEvent.selectOptions(comparisonFilter, "igual a");
     userEvent.click(buttonFilter);
+  })
+  it('checks equal to', async () => {
+    jest.spyOn(global, "fetch");
+    global.fetch.mockResolvedValue({
+      json: jest.fn().mockResolvedValue(mockAPI),
+    });
+    render(<MyProvider><App /></MyProvider>)
+    
+    const columnFilter = screen.getByTestId('column-filter')
+    const comparisonFilter = screen.getByTestId('comparison-filter')
+    const valueFilter = screen.getByTestId('value-filter')
+    const buttonFilter = screen.getByTestId('button-filter')
+
+    await waitFor(() => expect(fetch).toHaveBeenCalled())
+
+    userEvent.selectOptions(columnFilter, 'diameter')
+    userEvent.selectOptions(comparisonFilter, 'igual a')
+    userEvent.type(valueFilter, '10200')
+    userEvent.click(buttonFilter);
+
+    const YavinIV = await screen.findByRole("cell", { name: /Yavin IV/i });
+    expect(YavinIV).toBeInTheDocument()
   })
